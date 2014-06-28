@@ -12,11 +12,13 @@ end
 
 def init()
     server = TCPServer.open(2000)
-    loop {
-        client = server.accept
-        puts incommingMessage(client)
-        client.puts "Hi from ruby, cya!"
-        client.close
+    loop {  
+        Thread.start(server.accept) do |client|
+            msg = incommingMessage(client)
+            sleep(Random.rand(5))
+            client.puts msg
+            client.close
+        end     
     }
 end
 

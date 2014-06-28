@@ -1,15 +1,15 @@
 <cfscript>
-private string function callSocket2( required string host, required numeric port, required string message ) {
+private string function callSocket( required string host, required numeric port, required string message ) {
     var result = "";
-    var socket = createObject("java", "java.net.Socket");
+    var socket = createObject("java", "java.net.Socket"); 
     var outputStream = "";
     var inputStream = "";
     var output = "";
     var input = "";
     var inputStreamReader = "";
 
-    try {
-        socket.init(arguments.host, arguments.port);
+    try {   
+        socket.init(arguments.host, arguments.port);    
     } catch(java.net.ConnectException error) {
         throw message="#error.Message#: Could not connected to host #arguments.host# on port #arguments.port#";
     }
@@ -28,8 +28,11 @@ private string function callSocket2( required string host, required numeric port
     } else {
         throw message="Not connected to host #arguments.host# via port #arguments.port#";
     }
-    return result;
+    return result; 
 }
 </cfscript>
 
-<cfoutput>#callSocket2('localhost','2000',"Hello there, it's CF")#</cfoutput>
+<cfset start = GetTickCount() />
+<cfset randomNumber = RandRange(1, 100000, "SHA1PRNG") />
+<cfset response = javaCast('int', callSocket('localhost','2000','#randomNumber#') ) />
+<cflog file="socket" text="#(response==randomNumber)#  #randomNumber# == #response# in #(GetTickCount() - start)# ms" />
